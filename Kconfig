@@ -1,0 +1,45 @@
+# Read by ESP-IDF as a component Kconfig, and by both forges' `make menu`
+# (scripts/menu.py) for the RC_<PROTOCOL> prompts. stm-forge has no Kconfig
+# build step: its build only sees the defconfig lines, as
+# -DCONFIG_RC_<PROTOCOL>=1 or 0. Every protocol is off unless set.
+menuconfig RC
+    bool "RC receiver subsystem"
+    default y
+    help
+        RC receivers that stream channels over one serial wire, with link
+        and failsafe state. The core: struct rc_dev, rc_update(),
+        rc_get_channels(), rc_get_raw(), rc_get_link(), rc_rx_feed(),
+        rc_rx_idle() and the rc_* log helpers. Pick the protocols you need
+        below; none is built by default.
+
+if RC
+
+    config RC_CRSF
+        bool "CRSF (TBS Crossfire, ExpressLRS)"
+        default n
+        help
+            Build the CRSF driver: crsf_init() and friends. 420000 baud
+            8N1 by default; read or fed.
+
+    config RC_SBUS
+        bool "SBUS (Futaba, FrSky)"
+        default n
+        help
+            Build the SBUS driver: sbus_init() and friends. 100000 baud
+            8E2, inverted; read or fed.
+
+    config RC_DR16
+        bool "DJI DR16 (DT7 radio, RoboMaster DBUS)"
+        default n
+        help
+            Build the DR16 driver: dr16_init() and friends. 100000 baud
+            8E1, inverted; fed only, with rc_rx_idle() at every idle line.
+
+    config RC_DEBUG
+        bool "rc_dbg() lines"
+        default n
+        help
+            STM32 HAL only: compile rc_dbg() lines in. On ESP-IDF rc_dbg()
+            is ESP_LOGD and the log level decides.
+
+endif # RC
