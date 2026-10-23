@@ -21,22 +21,68 @@ forge package key are `rc`.
 > **Hardware unverified.** Host tests use fake receivers, a fake UART and
 > platform stubs. Nothing here has heard a real radio.
 
-[Supported receivers](#supported-receivers) · [Install](#install) ·
+[Supported receivers](#supported-receivers) · [Drivers](#drivers) ·
+[Install](#install) ·
 [Quick start](#quick-start) · [Examples](#examples) ·
 [Documentation](#documentation) · [Tests](#tests) · [License](#license)
 
 ## Supported receivers
 
-| Protocol | Receivers | Line | Channels | Failsafe | Bytes in |
-|---|---|---|---|---|---|
-| **CRSF** | TBS Crossfire, ExpressLRS | 420000 8N1 (configurable) | 16 + link statistics | none on the wire: timeout | read or fed |
-| **SBUS** | Futaba, FrSky and others | 100000 8E2, inverted | 16 + 2 digital | the receiver's flag | read or fed |
-| **DJI DR16** | DT7 radio, RoboMaster | 100000 8E1, inverted | 4 sticks + switches, mouse, keys | none on the wire: timeout | fed, with the idle line |
+| Protocol | Bus | Notes |
+|---|---|---|
+| **CRSF** | UART | TBS Crossfire and ExpressLRS serial protocol |
+| **SBUS** | UART | Futaba serial protocol |
+| **DJI DR16** | UART | DJI RoboMaster receiver protocol |
 
 One Kconfig option per protocol: `RC_CRSF`, `RC_SBUS`, `RC_DR16`. Every
 byte offset, scale and flag is cited in the
 [protocol reference](docs/chips.md); wiring is in the
 [hardware guide](docs/hardware.md).
+
+## Drivers
+
+<details><summary><b>CRSF</b> — UART</summary>
+
+- Receivers: TBS Crossfire, ExpressLRS
+- Line: 420000 8N1 (configurable)
+- Channels: 16 + link statistics
+- Failsafe: none on the wire: timeout
+- Bytes in: read or fed
+- Examples: ESP-IDF [crsf](examples/esp/crsf/), read on UART1 · STM32 HAL none
+- Chip reference: [CRSF](docs/chips.md#crsf)
+
+</details>
+
+<details><summary><b>SBUS</b> — UART</summary>
+
+- Receivers: Futaba, FrSky and others
+- Line: 100000 8E2, inverted
+- Channels: 16 + 2 digital
+- Failsafe: the receiver's flag
+- Bytes in: read or fed
+- Examples: ESP-IDF [sbus](examples/esp/sbus/), read, inverted by the UART ·
+  STM32 HAL [sbus_fed](examples/stm/sbus_fed/main.c), circular DMA
+- **No SBUS fast mode** (200000 baud) and no SBUS2 telemetry slots; an SBUS2
+  footer is accepted.
+- Chip reference: [SBUS](docs/chips.md#sbus)
+
+</details>
+
+<details><summary><b>DJI DR16</b> — UART</summary>
+
+- Receivers: DT7 radio, RoboMaster
+- Line: 100000 8E1, inverted
+- Channels: 4 sticks + switches, mouse, keys
+- Failsafe: none on the wire: timeout
+- Bytes in: fed, with the idle line
+- Examples: ESP-IDF [dr16](examples/esp/dr16/), fed from the UART event queue
+  · STM32 HAL [dr16_fed](examples/stm/dr16_fed/main.c), DMA to idle, as on a
+  RoboMaster board
+- **DR16 is fed only**: a DBUS frame has no header and no checksum, and
+  only the idle line between frames says where one starts.
+- Chip reference: [DJI DR16 (DBUS)](docs/chips.md#dji-dr16-dbus)
+
+</details>
 
 ## Install
 
@@ -111,11 +157,7 @@ rc_rx_idle(rc);                         /* the line went quiet; DR16 needs it */
 
 ## Examples
 
-| Protocol | ESP-IDF | STM32 HAL |
-|---|---|---|
-| CRSF | [crsf](examples/esp/crsf/), read on UART1 | -- |
-| SBUS | [sbus](examples/esp/sbus/), read, inverted by the UART | [sbus_fed](examples/stm/sbus_fed/main.c), circular DMA |
-| DR16 | [dr16](examples/esp/dr16/), fed from the UART event queue | [dr16_fed](examples/stm/dr16_fed/main.c), DMA to idle, as on a RoboMaster board |
+Each driver's examples are listed under [Drivers](#drivers).
 
 ESP-IDF examples find this library through `EXTRA_COMPONENT_DIRS`, which
 assumes it is checked out as `rc`:
@@ -132,10 +174,6 @@ STM32 examples are snippets to integrate into your application.
 
 - **No telemetry back to the radio**, and no CRSF parameter, MSP or
   device frames: framed, checked and dropped.
-- **No SBUS fast mode** (200000 baud) and no SBUS2 telemetry slots; an SBUS2
-  footer is accepted.
-- **DR16 is fed only**: a DBUS frame has no header and no checksum, and
-  only the idle line between frames says where one starts.
 - **No channel mapping**, reversing, expo or deadband: channels in wire
   order.
 - **No failsafe policy.** The library reports; the app decides.
