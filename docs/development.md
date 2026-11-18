@@ -136,18 +136,17 @@ lands at the tail next time, never behind it.
 ## Building the examples
 
 The ESP-IDF examples pull the library in through `EXTRA_COMPONENT_DIRS`
-pointing three directories up, and a local component is named after its
-directory, so the checkout must be a directory named `rc` -- the name
-esp-forge gives it, and what each `main/CMakeLists.txt` `REQUIRES`:
+pointing three directories up. Their `main/CMakeLists.txt` has no
+`REQUIRES`, and IDF gives the main component every component in the build,
+so the checkout may have any name:
 
 ```sh
-git clone https://github.com/JonasAtelier/mcu-rc rc
-cd rc/examples/esp/crsf          # or sbus, dr16
+git clone https://github.com/JonasAtelier/mcu-rc
+cd mcu-rc/examples/esp/crsf      # or sbus, dr16
 idf.py set-target esp32s3
 idf.py build
 ```
 
-A checkout named `mcu-rc` fails at configure time with no component `rc`.
 The STM32 examples are snippets: copy one into a project set up as in
 [installation](installation.md#stm32-hal).
 
