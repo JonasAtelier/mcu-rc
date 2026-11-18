@@ -12,12 +12,13 @@
 
 /*
  * The core is always built; each protocol's driver only under its own
- * option. With the library on and no protocol picked, say so -- stm-forge
- * compiles this file only when PKG_rc = y, so this is the CMakeLists' "on,
- * no protocol" warning on the ESP-IDF side.
+ * option. With the library built and no protocol picked, say so: this file
+ * is compiled only when the library is, so this is the CMakeLists' "no
+ * protocol" warning for every build that never reads that file (stm-forge,
+ * a hand-made project).
  */
 #if !(CONFIG_RC_CRSF || CONFIG_RC_SBUS || CONFIG_RC_DR16)
-#warning "rc: no protocol is selected; set RC_<PROTOCOL> = y under PKG_rc = y (or -DCONFIG_RC_<PROTOCOL>=1)"
+#warning "rc: no protocol is selected; define CONFIG_RC_<PROTOCOL>=1 (stm-forge: RC_<PROTOCOL> = y)"
 #endif
 
 #if defined(HAL_I2C_MODULE_ENABLED) || defined(HAL_SPI_MODULE_ENABLED) || \

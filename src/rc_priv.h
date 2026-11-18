@@ -144,8 +144,15 @@ static inline int rc_errno(esp_err_t err)
 }
 
 #else /* STM32 HAL */
+/*
+ * rc.h, included above, stops the build with a clear #error when
+ * CMSIS_device_header is undefined; the include is skipped then, so that
+ * error is not followed by a bare `#include expects "FILENAME" or
+ * <FILENAME>`.
+ */
+#ifdef CMSIS_device_header
 #include CMSIS_device_header
-
+#endif
 
 #ifdef HAL_I2C_MODULE_ENABLED
 typedef I2C_HandleTypeDef *rc_i2c_bus;

@@ -47,6 +47,13 @@
 
 #ifdef ESP_PLATFORM
 #include "driver/uart.h"
+#elif !defined(CMSIS_device_header)
+/*
+ * Undefined, the include fails with only
+ * `#include expects "FILENAME" or <FILENAME>`. Every library source includes
+ * this header first, rc_priv.h too, so the check is here.
+ */
+#error "rc: CMSIS_device_header is not defined; define it as the STM32 family header, \"stm32f4xx.h\" (CMake: set(MCU_DEVICE_HEADER stm32f4xx.h))"
 #else
 #include CMSIS_device_header
 #endif

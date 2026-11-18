@@ -38,7 +38,8 @@ examples/
   esp/<name>/               ESP-IDF projects: crsf, sbus, dr16
   stm/<name>/               STM32 snippets: sbus_fed, dr16_fed
 docs/                       the five guides
-CMakeLists.txt              ESP-IDF only; stm-forge globs src/**/*.c instead
+CMakeLists.txt              ESP-IDF component; elsewhere a static library for add_subdirectory(); stm-forge globs src/**/*.c instead
+                            the static library's options are Kconfig's bool entries, found by the type line directly under each `config`
 Kconfig                     RC and RC_<PROTOCOL>, for ESP-IDF and both forges' menus
 idf_component.yml           ESP-IDF component manifest
 LICENSE                     MIT
@@ -125,7 +126,8 @@ lands at the tail next time, never behind it.
 3. Cite every byte, range and flag to a source in `src/foo/foo_proto.h`,
    and hold them in a `test_foo_proto.c`.
 4. Add `CONFIG_RC_FOO` to:
-   - the no-protocol checks in `CMakeLists.txt` and `src/rc_port_stm.c`;
+   - the no-protocol checks in `CMakeLists.txt` (its ESP-IDF part; the
+     `add_subdirectory()` part reads `Kconfig`) and `src/rc_port_stm.c`;
    - its source in `CMakeLists.txt`;
    - `Kconfig`;
    - both forges' defconfigs;

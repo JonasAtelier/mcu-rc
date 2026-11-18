@@ -2,6 +2,8 @@
 # (scripts/menu.py) for the RC_<PROTOCOL> prompts. stm-forge has no Kconfig
 # build step: its build only sees the defconfig lines, as
 # -DCONFIG_RC_<PROTOCOL>=1 or 0. Every protocol is off unless set.
+# Outside ESP-IDF, CMakeLists.txt takes its options from the bool entries
+# here, found by their type line: keep `bool` directly under each `config`.
 menuconfig RC
     bool "RC receiver subsystem"
     default y
