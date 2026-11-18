@@ -21,6 +21,9 @@ needs a forge; if you build with esp-forge or stm-forge, see
 for CRSF or the DJI DR16, change the protocol name and start from its
 example. The reference follows the guides.
 
+**Arduino is not supported yet.** TODO: make the library usable from
+Arduino (Arduino IDE and PlatformIO).
+
 ## ESP-IDF, step by step
 
 **You need** ESP-IDF 5.2 or newer, with `idf.py` working in your terminal, and
