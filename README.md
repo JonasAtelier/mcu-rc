@@ -55,6 +55,6 @@ Migrating from `esp-crsf-rc`? [API changes](docs/usage.md#changes-from-esp-crsf-
 
 ## License
 
-[MIT](LICENSE).
+© 2026 JonasAtelier, [GPL-3.0-only](LICENSE).
 
 [Browse the workshop catalog · ESP32 and STM32 drivers](https://github.com/JonasAtelier/jonas-atelier-libraries#esp32-and-stm32-drivers)
